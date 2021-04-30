@@ -1,0 +1,34 @@
+{
+    "name": "felipe/simplerest",
+    "description": "API Rest framework for PHP",
+    "type": "project",
+    "license": "Commercial.",
+    "authors": [
+        {
+            "name": "boctulus",
+            "email": "boctulus@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0",
+        "byjg/jwt-session": "2.0.*",
+        "google/apiclient": "^2.0",
+        "facebook/graph-sdk": "^5.7",
+        "phpmailer/phpmailer": "^6.1",
+        "guzzlehttp/guzzle": "~7.0",
+        "symfony/polyfill-uuid": "^1.18",
+        "srmklive/paypal": "^3.0",
+        "vlucas/phpdotenv": "^5.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "simplerest\\": "app/",
+            "devdojo\\calculator\\": "packages/devdojo/calculator/src",
+            "boctulus\\grained_acl\\": "packages/boctulus/grained_acl/src",
+            "boctulus\\basic_acl\\": "packages/boctulus/basic_acl/src"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "8"
+    }
+}
