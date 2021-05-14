@@ -4,7 +4,7 @@ namespace simplerest\controllers\api;
 
 use simplerest\controllers\MyApiController; 
 
-class Bar extends MyApiController
+class Hooks extends MyApiController
 { 
     static protected $soft_delete = true;
 

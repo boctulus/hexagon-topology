@@ -20,9 +20,11 @@ if (!$acl_cache || is_file($acl_file) !== true) {
     $acl
     ->addRole('guest', -1)
     //->setGuest('guest')
+    ->addResourcePermissions('domains', ['read']) // (solo test)
 
     ->addRole('registered', 1)
     ->addInherit('guest')
+   
 
     ->addRole('bot', 200) 
     ->addInherit('registered')   

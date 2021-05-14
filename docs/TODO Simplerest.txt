@@ -272,9 +272,6 @@ https://blog.staffjoy.com/dont-migrate-databases-automatically-5039ab061365
 
 - Dudas:
 
-  - Un Service Provider en Laravel puede reemplazarse por otro? serviría para cambiar el proveedor de correo (SMTP) ?
-
-  - Qué tipos de Service Provider hay? una librería también se distribuye como SP?
 
   - JSON:API es compatible con HATEOAS ?
 
@@ -802,10 +799,6 @@ Se podría invalidar el access token del usuario y lo bueno es que solo es neces
 Aún sin implementar invalidación de tokens es posible expulsar a todos los usuarios y obligarlos a loguearse nuevamente cambiando las secret keys. Advertencia: si alguién se hubiera hecho con un access token podría haber cambiado la contraseña y si posee el refresh token puede volver a loguearse sin problemas. Obviamente si los tokens son de un usuario con elevados privilegios puede haber alterado permisos de mínima sobre registros y folders. 
 
 - Arreglar la falta de normalización de los folders.
-
-- DotEnv
-
-- Enviar efectivamente correos -prioridad alta-
 
 - Correos con formato. <-- ver como es en Laravel que usa un motor de plantillas.
 
@@ -3209,11 +3202,10 @@ Posibilidades para ofrecer APIs:
 
   - Como carpeta /api lo cual implicaría:
 
-    1. Que usen el mismo motor (MySQL de momento)
+    1. Que usen el mismo motor 
     2. Que no usen SPs
     3. Que el proyecto esté en PHP?  
     4. Configurar el .htaccess de Apache o su equivalente
-    5. Desacoplar el ACL y poder ajustarse a su tabla users.
 
   - Como subdominio: podría estar en otro lenguaje pero implica configurarlo.
 

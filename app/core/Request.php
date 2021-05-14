@@ -31,8 +31,8 @@ class Request  implements \ArrayAccess, Arrayable
                     $tmp[strtolower($key)] = $val;
                 }
                 static::$headers = $tmp;
-                
             }
+
             static::$instance = new static();
         }
         return static::$instance;
@@ -95,6 +95,10 @@ class Request  implements \ArrayAccess, Arrayable
 
     function deflate(){
         return in_array('deflate', explode(',', str_replace(' ', '',$this->header('Accept-Encoding'))));
+    }
+
+    function setQuery(array $arr){
+        static::$query_arr = $arr;
     }
 
     function getQuery(string $key = null)

@@ -14,10 +14,10 @@ use simplerest\core\FoldersAclExtension;
 use simplerest\core\api\v1\ResourceController;
 use simplerest\core\exceptions\SqlException;
 use simplerest\core\exceptions\InvalidValidationException;
-
+use simplerest\core\interfaces\IApi;
 use simplerest\libs\Files;    
 
-abstract class ApiController extends ResourceController
+abstract class ApiController extends ResourceController implements IApi
 {
     static protected $folder_field;
     static protected $soft_delete = true;
@@ -280,8 +280,8 @@ abstract class ApiController extends ResourceController
     function get($id = null) {
         global $api_version;
 
-        $_get   = Factory::request()->getQuery();   
-        
+        $_get   = Factory::request()->getQuery();  
+
         $this->id     = $id;
         $this->folder = Arrays::shift($_get,'folder');
 
@@ -1303,20 +1303,28 @@ abstract class ApiController extends ResourceController
     protected function onGettingBeforeCheck($id) { }
     protected function onGettingAfterCheck($id) { }
     protected function onGettingAfterCheck2($id) { }  ///
-    protected function onGot($id, ?int $count){ }
+    protected function onGot($id, ?int $count){
+        // webhook
+    }
 
     protected function onDeletingBeforeCheck($id){ }
     protected function onDeletingAfterCheck($id){ }
-    protected function onDeleted($id, ?int $affected){ }
+    protected function onDeleted($id, ?int $affected){
+        // webhook
+    }
 
     protected function onPostingBeforeCheck($id, Array &$data){ }
     protected function onPuttingBeforeCheck2($id, Array &$data){ }  ///
     protected function onPostingAfterCheck($id, Array &$data){ }
-    protected function onPost($id, Array $data){ }
+    protected function onPost($id, Array $data){
+        // webhook
+    }
 
     protected function onPuttingBeforeCheck($id, Array &$data){ }
     protected function onPuttingAfterCheck($id, Array &$data){ }
-    protected function onPut($id, Array $data, ?int $affected){ }
+    protected function onPut($id, Array $data, ?int $affected){
+        // webhook
+    }
 
      /*
         API event hooks for folder access

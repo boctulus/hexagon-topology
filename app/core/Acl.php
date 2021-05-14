@@ -379,7 +379,13 @@ abstract class Acl implements IAcl
         $perms = [];
         foreach ((array) $_permissions as $p){
             $tb = $p['tb'];
-            $perms[$tb] =  $p['la'] * 64 + $p['ra'] * 32 +  $p['l'] * 16 + $p['r'] * 8 + $p['c'] * 4 + $p['u'] * 2 + $p['d'];
+            $perms[$tb] =   $p['la'] * 64 + 
+                            $p['ra'] * 32 +  
+                            $p['l'] * 16 + 
+                            $p['r'] * 8 + 
+                            $p['c'] * 4 + 
+                            $p['u'] * 2 + 
+                            $p['d'];
         }
 
         return $perms;
