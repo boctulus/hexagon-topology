@@ -4,6 +4,7 @@ namespace boctulus\grained_acl;
 
 use simplerest\libs\DB;
 use simplerest\libs\Factory;
+use simplerest\libs\Url;
 
 class Acl extends \simplerest\core\Acl
 {
@@ -26,10 +27,15 @@ class Acl extends \simplerest\core\Acl
         $api_key = $this->config['api_key-admin'];
 
         // get all available sp_permissions
-        if ($this->config['api-sp_permissions'] !== null){
-            $res  = file_get_contents($this->config['api-sp_permissions'] . '?pageSize=50' . "&api_key=$api_key");
-            $json = json_decode($res, true);
-            $data = $json['data'];
+        if ($this->config['api-sp_permissions'] !== null)
+        {
+            $res = Url::consume_endpoint($this->config['api-sp_permissions'] . '?pageSize=50', 'GET', null, $api_key);
+            
+            if ($res['status_code'] != 200){
+                Factory::response()->sendError("Interal Server error", 500);
+            }
+
+            $data = $res['data'];
 
             $this->sp_permissions = array_column($data, 'name');
         } else {    
@@ -37,10 +43,15 @@ class Acl extends \simplerest\core\Acl
         }
 
         // get all available roles  
-        if ($this->config['api-roles'] !== null){
-            $res  = file_get_contents($this->config['api-roles'] . '?pageSize=50' . "&api_key=$api_key");
-            $json = json_decode($res, true);
-            $data = $json['data'];
+        if ($this->config['api-roles'] !== null)
+        {
+            $res = Url::consume_endpoint($this->config['api-roles'] . '?pageSize=50', 'GET', null, $api_key);
+            
+            if ($res['status_code'] != 200){
+                Factory::response()->sendError("Interal Server error", 500);
+            }
+
+            $data = $res['data'];
 
             $this->roles = $data;
         } else {

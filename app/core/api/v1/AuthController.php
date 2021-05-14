@@ -13,7 +13,7 @@ use simplerest\libs\Debug;
 use simplerest\libs\Validator;
 use simplerest\core\exceptions\InvalidValidationException;
 use simplerest\libs\Files;
-
+use simplerest\libs\Url;
 
 class AuthController extends Controller implements IAuth
 {
@@ -666,20 +666,27 @@ class AuthController extends Controller implements IAuth
                 if (!isset($payload->uid) || empty($payload->uid))
                     Factory::response()->sendError('Unauthorized',401,'Lacks id in web token');  
 
-                $config = Factory::config();
+                $uid = $payload->uid;
+                
 
                 // Check if lacks active status
+
+                $config = Factory::config();
+
                 if ($config['api_key-admin'] == null){
                     if (DB::table($this->users_table)->inSchema(['active']) && !isset($payload->active) && $payload->uid != -1){
                        Factory::response()->sendError('Unauthorized', 401, 'Lacks active status. Please log in.');
                     }
                 } else {
                     $api_key = $config['api_key-admin'];
+                    
+                    $res = Url::consume_endpoint($this->config['api-users'] . "?id=$uid&fields=active", 'GET', null, $api_key);
+                    
+                    if ($res['status_code'] != 200){
+                        Factory::response()->sendError("Interal Server error", 500);
+                    }
 
-                    // hacerlo con cURL y chequear que sea 200 OK la respuesta
-                    $res = file_get_contents("http://hexagon-users.lan/api/v1/users?id=1&fields=active&api_key=$api_key");
-                    $data = json_decode($res, true);
-                    $data = $data['data'];
+                    $data = $res['data'];
                     
                     if ($data[0]['active'] != 1){
                         Factory::response()->sendError('Unauthorized', 401, 'Lacks active status. Please log in.');

@@ -21,6 +21,11 @@ class TestController extends Controller
     {
         try {
             $res = Url::consume_endpoint('http://az.lan/api/v1/me', 'GET', null, '8ZfTPJB3VeCAAkea' );
+            
+            if ($res['status_code'] != 200){
+                dd("ERROR");
+            }
+            
             dd($res);
         } catch (\Exception $e){
             echo "Hubo un error: ". $e->getMessage();
