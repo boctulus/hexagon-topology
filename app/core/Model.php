@@ -268,7 +268,7 @@ class Model {
 	}
 
 
-	function registerInputMutator(string $field, callable $fn, callable $apply_if_fn = null){
+	function registerInputMutator(string $field, callable $fn, ?callable $apply_if_fn){
 		$this->input_mutators[$field] = [$fn, $apply_if_fn];
 		return $this;
 	}

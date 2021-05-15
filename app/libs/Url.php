@@ -85,13 +85,13 @@ class Url {
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,            
             CURLOPT_MAXREDIRS => 1,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CONNECTTIMEOUT => 2,
+            CURLOPT_TIMEOUT => 5,
             CURLOPT_CUSTOMREQUEST => $http_verb,
             CURLOPT_POSTFIELDS => $data,
             CURLOPT_HTTPHEADER => $h,
-            CURLOPT_CONNECTTIMEOUT => 2,
-            CURLOPT_TIMEOUT => 5,
             CURLOPT_FAILONERROR => $failonerror,
 
             /*

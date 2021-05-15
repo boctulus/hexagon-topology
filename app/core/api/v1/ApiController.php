@@ -2,20 +2,21 @@
 
 namespace simplerest\core\api\v1;
 
-use simplerest\core\interfaces\IAuth;
-use simplerest\libs\Factory;
-use simplerest\libs\Arrays;
 use simplerest\libs\DB;
-use simplerest\libs\Debug;
 use simplerest\libs\Url;
+use simplerest\libs\Debug;
+use simplerest\libs\Arrays;
+use simplerest\libs\Factory;
 use simplerest\libs\Strings;
-use simplerest\libs\Validator;
-use simplerest\core\FoldersAclExtension;
-use simplerest\core\api\v1\ResourceController;
-use simplerest\core\exceptions\SqlException;
-use simplerest\core\exceptions\InvalidValidationException;
-use simplerest\core\interfaces\IApi;
+use InvalidArgumentException;
 use simplerest\libs\Files;    
+use simplerest\libs\Validator;
+use simplerest\core\interfaces\IApi;
+use simplerest\core\interfaces\IAuth;
+use simplerest\core\FoldersAclExtension;
+use simplerest\core\exceptions\SqlException;
+use simplerest\core\api\v1\ResourceController;
+use simplerest\core\exceptions\InvalidValidationException;
 
 abstract class ApiController extends ResourceController implements IApi
 {
@@ -479,6 +480,7 @@ abstract class ApiController extends ResourceController implements IApi
                     Factory::response()->sendError('Not found', 404, $id != null ? "Registry with id=$id in table '{$this->model_table}' was not found" : '');
                 else{
                     // event hook
+                    $this->webhook('show', $rows[0], $id);
                     $this->onGot($id, 1);
 
                     Factory::response()->send($rows[0]);
@@ -851,6 +853,7 @@ abstract class ApiController extends ResourceController implements IApi
                 }
 
                 // event hook
+                $this->webhook('list', $rows);
                 $this->onGot($id, $total);
                 $res->send($rows);
             }
@@ -963,6 +966,7 @@ abstract class ApiController extends ResourceController implements IApi
             if ($last_inserted_id !==false){
                 // event hooks
                 $this->onPostFolder($last_inserted_id, $data, $this->folder);
+                $this->webhook('create', $data, $last_inserted_id);
                 $this->onPost($last_inserted_id, $data);
 
                 Factory::response()->send([$this->instance->getKeyName() => $last_inserted_id], 201);
@@ -1059,7 +1063,7 @@ abstract class ApiController extends ResourceController implements IApi
                 $instance2 = (new $model(true))
                 ->assoc();
 
-                if (count($instance2->where(['id => $id', static::$folder_field => $this->folder_name])->get()) == 0)
+                if (count($instance2->where([$id_name => $id, static::$folder_field => $this->folder_name])->get()) == 0)
                     Factory::response()->code(404)->sendError("Register for id=$id does not exists");
 
                 unset($data['folder']);    
@@ -1123,6 +1127,7 @@ abstract class ApiController extends ResourceController implements IApi
 
                 // even hooks        	    
                 $this->onPutFolder($id, $data, $affected, $this->folder);
+                $this->webhook('update', $data, $id);
                 $this->onPut($id, $data, $affected);
                 
                 Factory::response()->send("OK");
@@ -1276,6 +1281,8 @@ abstract class ApiController extends ResourceController implements IApi
                 if ($this->folder !==  null){
                     $this->onDeletedFolder($id, $affected, $this->folder);
                 }
+
+                $this->webhook('delete', [ ], $id);
                 $this->onDeleted($id, $affected);
                 
                 Factory::response()->sendJson("OK");
@@ -1304,44 +1311,54 @@ abstract class ApiController extends ResourceController implements IApi
     protected function onGettingAfterCheck($id) { }
     protected function onGettingAfterCheck2($id) { }  ///
 
-    protected function onGot($id, ?int $count){
-        // webhook 
-        $hooks = DB::table('hooks')
-        ->where(['op' => 'read', 'entity' => $this->model_table])
-        ->get();
-
-        //dd($hooks); //
-
-        foreach($hooks as $hook){
-            Url::consume_api($hook['callback'], 'POST', ['id' => $id]);
-        }
-        //exit;
-       
-    }
-
+    protected function onGot($id, ?int $count){ }
     protected function onDeletingBeforeCheck($id){ }
-    protected function onDeletingAfterCheck($id){ }
-    
-    protected function onDeleted($id, ?int $affected){
-        // webhook
-    }
+    protected function onDeletingAfterCheck($id){ }    
+    protected function onDeleted($id, ?int $affected){ }
 
     protected function onPostingBeforeCheck($id, Array &$data){ }
     protected function onPuttingBeforeCheck2($id, Array &$data){ }  ///
     protected function onPostingAfterCheck($id, Array &$data){ }
-
-    protected function onPost($id, Array $data){
-        // webhook
-    }
+    protected function onPost($id, Array $data){ }
 
     protected function onPuttingBeforeCheck($id, Array &$data){ }
     protected function onPuttingAfterCheck($id, Array &$data){ }
+    protected function onPut($id, Array $data, ?int $affected){ }
 
-    protected function onPut($id, Array $data, ?int $affected){
-        // webhook
+
+    /*
+        WebHooks     
+    
+        el id no es proporcionado
+    */
+    protected function webhook(string $op, $data, $id = null){
+        if (!in_array($op, ['show', 'list', 'create', 'update', 'delete'])){
+            throw new InvalidArgumentException("Invalid webhook operation for $op");
+        }    
+
+        $hooks = DB::table('hooks')
+        ->where(['op' => $op, 'entity' => $this->model_table])
+        ->get();
+
+        //dd($hooks); //
+
+        $body = [
+            'event_type' => $op,
+            'entity' => $this->model_table,
+            'id' => $id,
+            'data' => $data,
+            'user_id' => $this->uid,
+            'at' => date("Y-m-d H:i:s", time())
+        ];
+
+        foreach($hooks as $hook){
+            Url::consume_api($hook['callback'], 'POST', $body);
+        }
+        //exit;       
     }
 
-     /*
+
+    /*
         API event hooks for folder access
     */  
 
