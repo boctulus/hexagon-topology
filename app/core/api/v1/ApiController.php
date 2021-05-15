@@ -478,10 +478,10 @@ abstract class ApiController extends ResourceController implements IApi
                 if (empty($rows))
                     Factory::response()->sendError('Not found', 404, $id != null ? "Registry with id=$id in table '{$this->model_table}' was not found" : '');
                 else{
-                    Factory::response()->send($rows[0]);
-                    
                     // event hook
-                    //$this->onGot($id, $total);
+                    $this->onGot($id, 1);
+
+                    Factory::response()->send($rows[0]);
                 }
             }else{    
                 // "list
@@ -1303,12 +1303,25 @@ abstract class ApiController extends ResourceController implements IApi
     protected function onGettingBeforeCheck($id) { }
     protected function onGettingAfterCheck($id) { }
     protected function onGettingAfterCheck2($id) { }  ///
+
     protected function onGot($id, ?int $count){
-        // webhook
+        // webhook 
+        $hooks = DB::table('hooks')
+        ->where(['op' => 'read', 'entity' => $this->model_table])
+        ->get();
+
+        //dd($hooks); //
+
+        foreach($hooks as $hook){
+            Url::consume_api($hook['callback'], 'POST', ['id' => $id]);
+        }
+        //exit;
+       
     }
 
     protected function onDeletingBeforeCheck($id){ }
     protected function onDeletingAfterCheck($id){ }
+    
     protected function onDeleted($id, ?int $affected){
         // webhook
     }
@@ -1316,12 +1329,14 @@ abstract class ApiController extends ResourceController implements IApi
     protected function onPostingBeforeCheck($id, Array &$data){ }
     protected function onPuttingBeforeCheck2($id, Array &$data){ }  ///
     protected function onPostingAfterCheck($id, Array &$data){ }
+
     protected function onPost($id, Array $data){
         // webhook
     }
 
     protected function onPuttingBeforeCheck($id, Array &$data){ }
     protected function onPuttingAfterCheck($id, Array &$data){ }
+
     protected function onPut($id, Array $data, ?int $affected){
         // webhook
     }
