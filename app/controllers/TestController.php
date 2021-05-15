@@ -17,10 +17,25 @@ use simplerest\libs\Url;
 class TestController extends Controller
 {
 
+    function p0()
+    {
+        try {
+            $res = Url::consume_api('http://az.lan/api/v1/me', 'GET', null, '8ZfTPJB3VeCAAkea');
+            
+            if ($res['status_code'] != 200){
+                dd("ERROR");
+            }
+            
+            dd($res);
+        } catch (\Exception $e){
+            echo "Hubo un error: ". $e->getMessage();
+        }       
+    }
+
     function p1()
     {
         try {
-            $res = Url::consume_endpoint('http://az.lan/api/v1/me', 'GET', null, '8ZfTPJB3VeCAAkea' );
+            $res = Url::consume_api('http://az.lan/api/v1/me', 'GET', null, '8ZfTPJB3VeCAAkea', ['Content-Type' => 'text/plain'], [CURLOPT_ENCODING => 'gzip']);
             
             if ($res['status_code'] != 200){
                 dd("ERROR");
@@ -35,7 +50,7 @@ class TestController extends Controller
     function p2()
     {
         try {
-            $res = Url::consume_endpoint('http://az.lan/api/v1/products', 'POST',[
+            $res = Url::consume_api('http://az.lan/api/v1/products', 'POST',[
                 'name' => 'bocaditos Cabsha',
                 'size' => '1L',
                 'cost' => 8

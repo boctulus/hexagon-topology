@@ -29,7 +29,7 @@ class Acl extends \simplerest\core\Acl
         // get all available sp_permissions
         if ($this->config['api-sp_permissions'] !== null)
         {
-            $res = Url::consume_endpoint($this->config['api-sp_permissions'] . '?pageSize=50', 'GET', null, $api_key);
+            $res = Url::consume_api($this->config['api-sp_permissions'] . '?pageSize=50', 'GET', null, $api_key);
             
             if ($res['status_code'] != 200){
                 Factory::response()->sendError("Interal Server error", 500);
@@ -45,7 +45,7 @@ class Acl extends \simplerest\core\Acl
         // get all available roles  
         if ($this->config['api-roles'] !== null)
         {
-            $res = Url::consume_endpoint($this->config['api-roles'] . '?pageSize=50', 'GET', null, $api_key);
+            $res = Url::consume_api($this->config['api-roles'] . '?pageSize=50', 'GET', null, $api_key);
             
             if ($res['status_code'] != 200){
                 Factory::response()->sendError("Interal Server error", 500);

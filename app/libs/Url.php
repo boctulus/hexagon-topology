@@ -55,33 +55,47 @@ class Url {
 		return (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'PostmanRuntime') !== false);	
 	}
 
-    static function consume_endpoint($url, $http_verb, Array $data = null, $api_key = null, $failonerror = false, $options = null)
+    /*
+        Podría hacerse algo como tinkerwell de Laravel (que además permite consumir una api usando un token o leer el status)
+
+        https://beyondco.de/blog/consuming-http-apis-with-laravel-7-and-tinkerwell
+    */
+    static function consume_api(string $url, string $http_verb, Array $data = null, $api_key = null, Array $headers = null, Array $options = null, bool $failonerror = false)
     {   
         $data = json_encode($data);
-            
-        $opt = array(
+          
+        $_headers = array(
+            'Content-Type' => 'application/json',
+            'Content-Length' => strlen($data),
+            'cache-control' => 'no-cache'
+        );
+
+        $headers = (!empty($headers)) ? array_merge($_headers, $headers): $_headers;
+
+        if (!empty($api_key)){
+            $headers['X-API-KEY'] = $api_key;
+        }
+        
+        $h = [];
+        foreach ($headers as $key => $header){
+            $h[] = "$key: $header";
+        }
+
+        $_options = array(
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_MAXREDIRS => 1,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => $http_verb,
             CURLOPT_POSTFIELDS => $data,
-            CURLOPT_HTTPHEADER => array(
-                "X-API-KEY: ". $api_key,
-                'Content-Type: application/json',
-                "Content-Length: ". strlen($data),
-                "cache-control: no-cache"
-            ),
+            CURLOPT_HTTPHEADER => $h
         );
 
-        if (!empty($options)){
-            $opt = $opt + $options;
-        }
+        $options = (!empty($options)) ? $_options + $options : $_options;
 
         $curl = curl_init();
-        curl_setopt_array($curl, $opt);
+        curl_setopt_array($curl, $options);
     
         /*
             No parece haber solución más sencilla que des-habilitar chequeo de SSL

@@ -680,7 +680,7 @@ class AuthController extends Controller implements IAuth
                 } else {
                     $api_key = $config['api_key-admin'];
                     
-                    $res = Url::consume_endpoint($this->config['api-users'] . "?id=$uid&fields=active", 'GET', null, $api_key);
+                    $res = Url::consume_api($this->config['api-users'] . "?id=$uid&fields=active", 'GET', null, $api_key);
                     
                     if ($res['status_code'] != 200){
                         Factory::response()->sendError("Interal Server error", 500);
