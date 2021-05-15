@@ -56,7 +56,7 @@ class Url {
 	}
 
     /*
-        Podría hacerse algo como tinkerwell de Laravel (que además permite consumir una api usando un token o leer el status)
+        Podría hacerse algo como tinkerwell de Laravel => permitiría consumir una api usando un token o leer el status
 
         https://beyondco.de/blog/consuming-http-apis-with-laravel-7-and-tinkerwell
     */
@@ -89,43 +89,29 @@ class Url {
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => $http_verb,
             CURLOPT_POSTFIELDS => $data,
-            CURLOPT_HTTPHEADER => $h
+            CURLOPT_HTTPHEADER => $h,
+            CURLOPT_CONNECTTIMEOUT => 2,
+            CURLOPT_TIMEOUT => 5,
+            CURLOPT_FAILONERROR => $failonerror,
+
+            /*
+                No parece haber solución más sencilla que des-habilitar chequeo de SSL
+                
+                https://cheapsslsecurity.com/blog/ssl-certificate-problem-unable-to-get-local-issuer-certificate/
+            */
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0
+
         );
 
         $options = (!empty($options)) ? $_options + $options : $_options;
 
         $curl = curl_init();
         curl_setopt_array($curl, $options);
-    
-        /*
-            No parece haber solución más sencilla que des-habilitar chequeo de SSL
-            
-            https://cheapsslsecurity.com/blog/ssl-certificate-problem-unable-to-get-local-issuer-certificate/
-        */
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-    
-        /*
-            Generar excepcion si algo sale mal
-        */
-        curl_setopt($curl, CURLOPT_FAILONERROR, $failonerror);
-    
-        /*
-            TIMEOUT
-        */
-    
-        // Tell cURL that it should only spend X seconds
-        // trying to connect to the URL in question.
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 2);
-    
-        // A given cURL operation should only take
-        // X seconds max.
-        curl_setopt($curl, CURLOPT_TIMEOUT, 5);
-    
+
+        
         $response = curl_exec($curl);
     
-        //echo $response;
-        
         $err_nro = curl_errno($curl);
         $err_msg = curl_error($curl);	
         $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
