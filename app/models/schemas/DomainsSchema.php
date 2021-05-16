@@ -18,7 +18,7 @@ class DomainsSchema implements ISchema
 
 			'attr_types'	=> [
 				'id' => 'INT',
-				'domain' => 'STR',
+				'name' => 'STR',
 				'sub' => 'STR',
 				'sub_type' => 'STR',
 				'lang' => 'STR',
@@ -36,10 +36,10 @@ class DomainsSchema implements ISchema
 				'created_at' => 'STR'
 			],
 
-			'nullable'		=> ['id', 'sub', 'sub_type', 'country', 'registered_at', 'registrar', 'niche', 'keywords', 'server', 'api_key', 'cms', 'alexa_rank', 'created_at'],
+			'nullable'		=> ['id', 'sub', 'sub_type', 'country', 'registered_at', 'registrar', 'niche', 'keywords', 'server', 'api_key', 'cms', 'adsense', 'alexa_rank', 'created_at'],
 
 			'rules' 		=> [
-				'domain' => ['max' => 30],
+				'name' => ['max' => 30],
 				'sub' => ['max' => 30],
 				'lang' => ['max' => 2],
 				'country' => ['max' => 2],

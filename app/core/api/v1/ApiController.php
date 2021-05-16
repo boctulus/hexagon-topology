@@ -626,6 +626,9 @@ abstract class ApiController extends ResourceController implements IApi
                                             $data[$campo][] = $max;
                                         }                                         
                                     break;
+                                    case 'notBetween':
+                                        throw new \Exception("Operator 'notBetween' is not implemented");  
+                                    break;
                                     default:
                                         // 'eq', 'gt', ...
 
@@ -1090,10 +1093,12 @@ abstract class ApiController extends ResourceController implements IApi
                     
             }        
 
+            /*
             foreach ($data as $k => $v){
                 if (strtoupper($v) == 'NULL' && $this->instance->isNullable($k)) 
                     $data[$k] = NULL;
             }
+            */
             
             $validado = (new Validator())->setRequired($put_mode)->validate($this->instance->getRules(), $data);
             if ($validado !== true){
@@ -1355,6 +1360,13 @@ abstract class ApiController extends ResourceController implements IApi
 
                 $body['data'] = array_merge($old_data, $body['data']);
             }
+
+            //dd($body);
+
+            //parse_str($hook['conditions'], $conditions);
+
+            //foreach($conditions as $field => $conds){    
+            //} 
 
             Url::consume_api($hook['callback'], 'POST', $body);
         }      
