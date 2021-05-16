@@ -1257,9 +1257,10 @@ abstract class ApiController extends ResourceController implements IApi
                 }
             }
 
-            $soft_is_supported  = $this->instance->inSchema([$this->instance->deletedBy()]);
-
-            if ($soft_is_supported){
+            $soft_is_supported   = $this->instance->inSchema([$this->instance->deletedAt()]);
+            $soft_del_has_author = $this->instance->inSchema([$this->instance->deletedBy()]);
+            
+            if ($soft_is_supported && $soft_del_has_author){
                 $extra = array_merge($extra, [$this->instance->deletedBy() => $this->impersonated_by != null ? $this->impersonated_by : $this->uid]);
             }               
        
@@ -1269,7 +1270,7 @@ abstract class ApiController extends ResourceController implements IApi
             }
 
             $this->instance->setSoftDelete($soft_is_supported && static::$soft_delete);
-
+            
             // event hook
             $this->onDeletingAfterCheck($id);
 
@@ -1328,8 +1329,6 @@ abstract class ApiController extends ResourceController implements IApi
 
     /*
         WebHooks     
-    
-        el id no es proporcionado
     */
     protected function webhook(string $op, $data, $id = null){
         if (!in_array($op, ['show', 'list', 'create', 'update', 'delete'])){
@@ -1339,8 +1338,6 @@ abstract class ApiController extends ResourceController implements IApi
         $hooks = DB::table('hooks')
         ->where(['op' => $op, 'entity' => $this->model_table])
         ->get();
-
-        //dd($hooks); //
 
         $body = [
             'event_type' => $op,
@@ -1352,9 +1349,15 @@ abstract class ApiController extends ResourceController implements IApi
         ];
 
         foreach($hooks as $hook){
+            if ($hook['full_record'] && ($op == 'update' || $op == 'delete')){
+                $old_data = DB::table($this->model_table)
+                ->assoc()->find($id)->showDeleted()->first();
+
+                $body['data'] = array_merge($old_data, $body['data']);
+            }
+
             Url::consume_api($hook['callback'], 'POST', $body);
-        }
-        //exit;       
+        }      
     }
 
 

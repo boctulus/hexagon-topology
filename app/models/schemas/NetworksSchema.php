@@ -24,10 +24,11 @@ class NetworksSchema implements ISchema
 				'keywords' => 'STR',
 				'description' => 'STR',
 				'strategy' => 'STR',
-				'created_at' => 'STR'
+				'created_at' => 'STR',
+				'deleted_at' => 'STR'
 			],
 
-			'nullable'		=> ['id', 'country', 'keywords', 'description'],
+			'nullable'		=> ['id', 'country', 'keywords', 'description', 'deleted_at'],
 
 			'rules' 		=> [
 				'name' => ['max' => 30],

@@ -8,9 +8,6 @@ use simplerest\models\schemas\NetworksSchema;
 
 class NetworksModel extends Model
 { 
-	
-	
-
 	protected $hidden   = [];
 	protected $not_fillable = [];
 
