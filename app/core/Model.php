@@ -141,7 +141,7 @@ class Model {
 		if (empty($this->table_name)){
 			$class_name = get_class($this);
 			$class_name = substr($class_name, strrpos($class_name, '\\')+1);
-			$str = Strings::fromCamelCase($class_name);
+			$str = Strings::camelToSnake($class_name);
 			$this->table_name = strtolower(substr($str, 0, strlen($str)-6));
 		}
 		*/
@@ -1270,6 +1270,10 @@ class Model {
 	// Debug last query
 	function getLog(){
 		return $this->dd2();
+	}
+
+	function getWhere(){
+		return $this->where;
 	}
 
 	function get(array $fields = null, array $order = null, int $limit = NULL, int $offset = null, $pristine = false){

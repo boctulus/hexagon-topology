@@ -38,7 +38,7 @@ class MigrationsController extends Controller
         asort($filenames);
 
         foreach ($filenames as $filename) {        
-            $class_name = Strings::toCamelCase(substr(substr($filename,18),0,-4));
+            $class_name = Strings::snakeToCamel(substr(substr($filename,18),0,-4));
             
             require_once MIGRATIONS_PATH . DIRECTORY_SEPARATOR . $filename;
 
@@ -81,7 +81,7 @@ class MigrationsController extends Controller
         $cnt = min($steps, count($filenames));
         for ($i=0; $i<$cnt; $i++){
             $filename   = $filenames[$i];            
-            $class_name = Strings::toCamelCase(substr(substr($filename,18),0,-4));
+            $class_name = Strings::snakeToCamel(substr(substr($filename,18),0,-4));
 
             require_once MIGRATIONS_PATH . DIRECTORY_SEPARATOR . $filename;
 

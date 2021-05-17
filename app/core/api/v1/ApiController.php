@@ -52,13 +52,13 @@ abstract class ApiController extends ResourceController implements IApi
         }
 
         if ($this->model_name != null){
-            $this->model_table = Strings::fromCamelCase(Strings::removeRTrim('Model', $this->model_name));
+            $this->model_table = Strings::camelToSnake(Strings::removeRTrim('Model', $this->model_name));
         }else {
             if ($this->model_table != null){            
                 $this->model_name = implode(array_map('ucfirst',explode('_', $this->model_table))) . 'Model';
             } elseif (preg_match('/([A-Z][a-z0-9_]+[A-Z]*[a-z0-9_]*[A-Z]*[a-z0-9_]*[A-Z]*[a-z0-9_]*)/', get_called_class(), $matchs)){
                 $this->model_name = $matchs[1] . 'Model';
-                $this->model_table = Strings::fromCamelCase($matchs[1]);
+                $this->model_table = Strings::camelToSnake($matchs[1]);
             } else {
                 Factory::response()->sendError("ApiController with undefined Model", 500);
             }  
@@ -1375,21 +1375,22 @@ abstract class ApiController extends ResourceController implements IApi
         ];
 
         foreach($hooks as $hook){
-            if ($hook['full_record'] && ($op == 'update' || $op == 'delete')){
+            if ($op == 'update' || $op == 'delete' || ($op == 'show' && !empty(Factory::request()->getQuery('fields')))){
                 $old_data = DB::table($this->model_table)
                 ->assoc()->find($id)->showDeleted()->first();
 
                 $body['data'] = array_merge($old_data, $body['data']);
             }
 
-            //dd($body);
-
-            //parse_str($hook['conditions'], $conditions);
-
-            //foreach($conditions as $field => $conds){    
-            //} 
-
-            Url::consume_api($hook['callback'], 'POST', $body);
+            if (empty($hook['conditions'])){
+                Url::consume_api($hook['callback'], 'POST', $body);
+            } else {
+                if ($op != 'list'){
+                    if (Strings::filter($body['data'], $hook['conditions'])){
+                        Url::consume_api($hook['callback'], 'POST', $body);
+                    }
+                }
+            }
         }      
     }
 

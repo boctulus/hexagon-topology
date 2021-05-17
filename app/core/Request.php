@@ -38,11 +38,6 @@ class Request  implements \ArrayAccess, Arrayable
         return static::$instance;
     }
 
-    function setParams($params){
-        static::$params = $params;
-        return static::getInstance();
-    }
-
     function headers(){
         return static::$headers;
     }
@@ -103,11 +98,12 @@ class Request  implements \ArrayAccess, Arrayable
 
     function getQuery(string $key = null)
     {
-        if ($key == null)
+        if ($key == null){
             return static::$query_arr;
-        else 
-             return static::$query_arr[$key];   
-    }    
+        } else { 
+            return static::$query_arr[$key] ?? null;   
+        }
+    }   
 
     // getter destructivo sobre $query_arr
     function shiftQuery($key, $default_value = NULL)
@@ -129,7 +125,15 @@ class Request  implements \ArrayAccess, Arrayable
         return $out;
     }
 
-    function getParam($index){
+    function setParams(Array $params){
+        static::$params = $params;
+        return static::getInstance();
+    }
+
+    function getParam($index = null){
+        if (empty($index)){
+            return static::$params;  
+        }
         return static::$params[$index];
     } 
 

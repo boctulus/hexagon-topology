@@ -168,7 +168,7 @@ class MakeController extends Controller
         $name_uc = ucfirst($name);
 
         if (strpos($name, '_') !== false) {
-            $camel_case  = Strings::toCamelCase($name);
+            $camel_case  = Strings::snakeToCamel($name);
             $snake_case = $name_lo;
         } elseif ($name == $name_lo){
             $snake_case = $name;
@@ -178,7 +178,7 @@ class MakeController extends Controller
         }
         
         if (!isset($snake_case)){
-            $snake_case = Strings::fromCamelCase($camel_case);
+            $snake_case = Strings::camelToSnake($camel_case);
         }
 
         $this->camel_case  = $camel_case; 
