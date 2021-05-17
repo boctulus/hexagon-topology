@@ -106,7 +106,7 @@ class Strings
 		return (strpos($haystack, $needle) !== false);
 	}
 
-	static function containsWord($str, array $arr) {
+	static function containsWord($word, $str) {
 		// Works in Hebrew and any other unicode characters
 		// Thanks https://medium.com/@shiba1014/regex-word-boundaries-with-unicode-207794f6e7ed
 		// Thanks https://www.phpliveregex.com/

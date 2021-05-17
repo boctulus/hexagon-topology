@@ -75,7 +75,7 @@ class TestController extends Controller
             'registered_at' => NULL,
             'registrar' => 'NameCheap',
             'niche' => 'cryptos',
-            'description' => 'orientado a cryptos y otras yerbas',
+            'description' => 'sobre cryptos y otras yerbas',
             'keywords' => 'cryptos,cryptocurrencies,Musk',
             'server' => NULL,
             'api_key' => NULL,
@@ -86,7 +86,7 @@ class TestController extends Controller
             'created_at' => '2021-05-14'
         ];
         
-        $cond_str = "adsense=mabel&server=null!&cms=&alexa_rank[lteq]=1000&network_id[eq]=1&lang[neq]=de&name[contains]=crypto&name[endsWith]=.co&created_at[between]=2019-01-01,2021-12-31&id[notBetween]=100,500&sub[in]=w3,www&niche[notIn]=DOGE,SHIBA&registrar=DonWeb,NameCheap&server=";
+        $cond_str = "adsense=mabel&server=null!&cms=&alexa_rank[lteq]=1000&network_id[eq]=1&lang[neq]=de&name[contains]=crypto&name[endsWith]=.com&created_at[between]=2019-01-01,2021-12-31&id[notBetween]=100,500&sub[in]=w3,www&niche[notIn]=DOGE,SHIBA&registrar=DonWeb,NameCheap&server=&description[containsWord]=cryptos&keywords[containsWord]=cryptocurrencies";
 
         parse_str($cond_str, $conditions);
         
@@ -182,6 +182,16 @@ class TestController extends Controller
                                     continue 2;
                                 }
                                 break;    
+                            case 'containsWord':
+                                if (Strings::containsWord($val, $reg[$field])){                           
+                                    continue 2;
+                                }
+                                break;   
+                            case 'notContainsWord':
+                                if (!Strings::containsWord($val, $reg[$field])){                           
+                                    continue 2;
+                                }
+                                break;  
                         
                             default:
                                 throw new \InvalidArgumentException("Operator '$op' is unknown", 1);
