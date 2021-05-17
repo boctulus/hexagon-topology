@@ -14,5 +14,11 @@ class NetworksModel extends Model
     function __construct(bool $connect = false){
         parent::__construct($connect, new NetworksSchema());
 	}	
+
+	/*
+	function onRead(int $count){
+		var_dump($this->dd());
+	}
+	*/
 }
 

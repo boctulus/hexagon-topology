@@ -14,6 +14,5 @@ class HooksModel extends Model
     function __construct(bool $connect = false){
         parent::__construct($connect, new HooksSchema());
 	}	
-	
 }
 

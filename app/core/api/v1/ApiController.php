@@ -480,8 +480,8 @@ abstract class ApiController extends ResourceController implements IApi
                     Factory::response()->sendError('Not found', 404, $id != null ? "Registry with id=$id in table '{$this->model_table}' was not found" : '');
                 else{
                     // event hook
-                    $this->webhook('show', $rows[0], $id);
                     $this->onGot($id, 1);
+                    $this->webhook('show', $rows[0], $id);
 
                     Factory::response()->send($rows[0]);
                 }
@@ -543,9 +543,6 @@ abstract class ApiController extends ResourceController implements IApi
 
                 $allops = ['eq', 'gt', 'gteq', 'lteq', 'lt', 'neq'];
                 $eqops  = ['=',  '>' , '>=',   '<=',   '<',  '!=' ];
-
-                //var_export($_get);
-                //exit;
 
                 foreach ($_get as $key => $val){
                     if (is_array($val)){
@@ -650,7 +647,31 @@ abstract class ApiController extends ResourceController implements IApi
                                 }
                             }
                             
-                        }else{                           
+                        }else{
+                            
+                            /*
+                                null! tiene un funcionamiento muy limitado porque la validación hace que
+                                no funcione si el campo no es un string o si la lontitud es inferior a 5 o 
+                                sea a la de "null!"
+
+                            */
+                            if (count($val) == 2){
+                                if ($val[1] == 'null!'){
+                                    unset($_get[$key]); 
+                                    
+                                    $_get[$key] = [$val[0],  NULL, 'IS'];
+                                }
+                            }
+
+                            /*
+                                Cuando no se especifica valor como en ?description= debería buscar por un
+                                string vacio y de hecho al debuguear el SQL se lee por ejemplo:  
+
+                                SELECT * FROM networks WHERE (description = '') AND deleted_at IS NULL LIMIT 10;
+
+                                Sin embargo....... no arroja registros!!!! <-- BUG
+                            */
+                            
 
                             // IN
                             $v = $val[1];
@@ -664,7 +685,7 @@ abstract class ApiController extends ResourceController implements IApi
                             } 
                         }   
                         
-                    }                         
+                    }                      
                 }
 
                 // avoid guests can see everything with just 'read' permission
@@ -856,8 +877,8 @@ abstract class ApiController extends ResourceController implements IApi
                 }
 
                 // event hook
-                $this->webhook('list', $rows);
                 $this->onGot($id, $total);
+                $this->webhook('list', $rows);
                 $res->send($rows);
             }
 
@@ -968,9 +989,9 @@ abstract class ApiController extends ResourceController implements IApi
 
             if ($last_inserted_id !==false){
                 // event hooks
-                $this->onPostFolder($last_inserted_id, $data, $this->folder);
-                $this->webhook('create', $data, $last_inserted_id);
+                $this->onPostFolder($last_inserted_id, $data, $this->folder);                
                 $this->onPost($last_inserted_id, $data);
+                $this->webhook('create', $data, $last_inserted_id);
 
                 Factory::response()->send([$this->instance->getKeyName() => $last_inserted_id], 201);
             }	
@@ -1131,9 +1152,9 @@ abstract class ApiController extends ResourceController implements IApi
             if ($affected !== false) {
 
                 // even hooks        	    
-                $this->onPutFolder($id, $data, $affected, $this->folder);
-                $this->webhook('update', $data, $id);
+                $this->onPutFolder($id, $data, $affected, $this->folder);                
                 $this->onPut($id, $data, $affected);
+                $this->webhook('update', $data, $id);
                 
                 Factory::response()->send("OK");
             } else {
@@ -1288,8 +1309,8 @@ abstract class ApiController extends ResourceController implements IApi
                     $this->onDeletedFolder($id, $affected, $this->folder);
                 }
 
-                $this->webhook('delete', [ ], $id);
                 $this->onDeleted($id, $affected);
+                $this->webhook('delete', [ ], $id);
                 
                 Factory::response()->sendJson("OK");
             }	

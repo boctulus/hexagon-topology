@@ -2164,7 +2164,7 @@ class Model {
 	protected function boot() { }
 
 	protected function onReading() { }
-	protected function onRead(?int $count) { }
+	protected function onRead(int $count) { }
 	
 	protected function onDeleting() { }
 	protected function onDeleted(?int $count) { }
