@@ -1361,11 +1361,12 @@ abstract class ApiController extends ResourceController implements IApi
             throw new InvalidArgumentException("Invalid webhook operation for $op");
         }    
 
-        $hooks = DB::table('hooks')
+        $webhooks = DB::table('webhooks')
         ->where(['op' => $op, 'entity' => $this->model_table])
         ->get();
 
-        $body = [
+        $body = [       
+            'webhook_id' => null,     
             'event_type' => $op,
             'entity' => $this->model_table,
             'id' => $id,
@@ -1376,10 +1377,12 @@ abstract class ApiController extends ResourceController implements IApi
 
         $old_data = null;
 
-        foreach($hooks as $hook){
+        foreach($webhooks as $hook){
             if (!empty($hook['conditions'])){
                 parse_str($hook['conditions'], $conditions);
             }
+
+            $body['webhook_id'] = $hook['id'];
 
             if ($op == 'update' || $op == 'delete' || ($op == 'show' && !empty(Factory::request()->getQuery('fields')))){
                 

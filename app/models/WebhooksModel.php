@@ -4,16 +4,18 @@ namespace simplerest\models;
 
 use simplerest\core\Model;
 use simplerest\libs\ValidationRules;
-use simplerest\models\schemas\HooksSchema;
+use simplerest\models\schemas\WebhooksSchema;
 
-class HooksModel extends Model
-{ 	
+class WebhooksModel extends Model
+{ 
+	
+	
+
 	protected $hidden   = [];
 	protected $not_fillable = [];
 
     function __construct(bool $connect = false){
-        parent::__construct($connect, new HooksSchema());
+        parent::__construct($connect, new WebhooksSchema());
 	}	
-	
 }
 

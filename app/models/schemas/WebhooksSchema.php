@@ -6,13 +6,13 @@ use simplerest\core\interfaces\ISchema;
 
 ### IMPORTS
 
-class HooksSchema implements ISchema
+class WebhooksSchema implements ISchema
 { 
 	### TRAITS
 	
 	function get(){
 		return [
-			'table_name'	=> 'hooks',
+			'table_name'	=> 'webhooks',
 
 			'id_name'		=> 'id',
 
