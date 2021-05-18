@@ -23,7 +23,6 @@ class HooksSchema implements ISchema
 				'op' => 'STR',
 				'conditions' => 'STR',
 				'callback' => 'STR',
-				'full_record' => 'INT',
 				'belongs_to' => 'INT',
 				'created_at' => 'STR',
 				'created_by' => 'INT',
@@ -33,12 +32,13 @@ class HooksSchema implements ISchema
 				'deleted_by' => 'INT'
 			],
 
-			'nullable'		=> ['id', 'name', 'conditions', 'full_record', 'belongs_to', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by'],
+			'nullable'		=> ['id', 'name', 'conditions', 'belongs_to', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'deleted_by'],
 
 			'rules' 		=> [
 				'name' => ['max' => 50],
 				'entity' => ['max' => 50],
 				'op' => ['max' => 10],
+				'conditions' => ['max' => 1024],
 				'callback' => ['max' => 255]
 			]
 		];

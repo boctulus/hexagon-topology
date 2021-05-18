@@ -33,10 +33,11 @@ class DomainsSchema implements ISchema
 				'adsense' => 'STR',
 				'alexa_rank' => 'INT',
 				'network_id' => 'INT',
-				'created_at' => 'STR'
+				'created_at' => 'STR',
+				'deleted_at' => 'STR'
 			],
 
-			'nullable'		=> ['id', 'sub', 'sub_type', 'country', 'registered_at', 'registrar', 'niche', 'keywords', 'server', 'api_key', 'cms', 'adsense', 'alexa_rank', 'created_at'],
+			'nullable'		=> ['id', 'sub', 'sub_type', 'country', 'registered_at', 'registrar', 'niche', 'keywords', 'server', 'api_key', 'cms', 'adsense', 'alexa_rank', 'created_at', 'deleted_at'],
 
 			'rules' 		=> [
 				'name' => ['max' => 30],

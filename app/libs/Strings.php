@@ -338,10 +338,8 @@ class Strings
 
 		adsense=mabel&api_key=&alexa_rank[lteq]=1000
 	*/
-	static function filter(Array $reg, string $conditions_str)
+	static function filter(Array $reg, Array $conditions)
 	{
-		parse_str($conditions_str, $conditions);
-
 		/*
 			Volver búsquedas insensitivas al case (sin implementar)
 		*/	
@@ -398,7 +396,6 @@ class Strings
 								}
 								break;
 							case 'gteq':
-								dd($reg, 'REG');
 								if ($reg[$field] >= $val){
 									$ok = true;
 									continue 2;

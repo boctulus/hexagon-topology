@@ -1356,7 +1356,7 @@ abstract class ApiController extends ResourceController implements IApi
     /*
         WebHooks     
     */
-    protected function webhook(string $op, $data, $id = null){
+    protected function webhook(string $op, $data, $id = null){        
         if (!in_array($op, ['show', 'list', 'create', 'update', 'delete'])){
             throw new InvalidArgumentException("Invalid webhook operation for $op");
         }    
@@ -1375,7 +1375,32 @@ abstract class ApiController extends ResourceController implements IApi
         ];
 
         foreach($hooks as $hook){
+            if (!empty($hook['conditions'])){
+                parse_str($hook['conditions'], $conditions);
+            }
+                
             if ($op == 'update' || $op == 'delete' || ($op == 'show' && !empty(Factory::request()->getQuery('fields')))){
+                
+                if ($op == 'update' && !empty($hook['conditions'])){                    
+                    $cond_fields = array_keys($conditions);
+                    $cond_fields = array_unique($cond_fields);
+                    $row_fields  = array_keys($body['data']);
+
+                    if (count(array_diff($cond_fields,$row_fields)) == 0)
+                    {
+                        if (Strings::filter($body['data'], $conditions)){
+                            
+                            $old_data = DB::table($this->model_table)
+                            ->assoc()->find($id)->showDeleted()->first();
+                            $body['data'] = array_merge($old_data, $body['data']);
+
+                            //dd('--> callback');
+                            Url::consume_api($hook['callback'], 'POST', $body);
+                        }
+                    }  
+                    continue;
+                }
+
                 $old_data = DB::table($this->model_table)
                 ->assoc()->find($id)->showDeleted()->first();
 
@@ -1383,10 +1408,12 @@ abstract class ApiController extends ResourceController implements IApi
             }
 
             if (empty($hook['conditions'])){
+                //dd('--> callback');
                 Url::consume_api($hook['callback'], 'POST', $body);
             } else {
-                if ($op != 'list'){
-                    if (Strings::filter($body['data'], $hook['conditions'])){
+                if ($op != 'list'){                   
+                    if (Strings::filter($body['data'], $conditions)){
+                        //dd('--> callback');
                         Url::consume_api($hook['callback'], 'POST', $body);
                     }
                 }

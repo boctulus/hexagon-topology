@@ -67,7 +67,7 @@ class TestController extends Controller
     function x(){
         $reg = [
             'id' => 3,
-            'name' => 'crypto-shit-coins.com',
+            'name' => 'crypto---uu.net',
             'sub' => 'www',
             'sub_type' => 'subdomain',
             'lang' => 'en',
@@ -87,7 +87,7 @@ class TestController extends Controller
         ];
         
 
-        $cond_str = "adsense=mabel&server=null!&api_key=&alexa_rank[lteq]=1000&network_id[eq]=1&lang[neq]=de&name[contains]=crypto&name[endsWith]=.com&created_at[between]=2019-01-01,2021-12-31&id[notBetween]=100,500&sub[in]=w3,www&niche[notIn]=DOGE,SHIBA&registrar=DonWeb,NameCheap&server=&description[containsWord]=cryptos&keywords[containsWord]=cryptocurrencies&description[containsWord]=mala,malas,regulares&country[notIn]=uy,ar&cms[contains]=ss,zz,uu";
+        $cond_str = "name[contains]=crypto&name[notEndsWith]=.es";
      
         
         dd(Strings::filter($reg, $cond_str), 'OK');
