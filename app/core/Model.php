@@ -2273,6 +2273,10 @@ class Model {
 		return $this->schema['rules'] ?? NULL;
 	}
 
+	function getRule(string $name){
+		return $this->schema['rules'][$name] ?? NULL;
+	}
+
 	/**
 	 * Set the value of conn
 	 *

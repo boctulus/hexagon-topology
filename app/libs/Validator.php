@@ -351,7 +351,7 @@ class Validator implements IValidator
 						if(isset($rule['min'])){ 
 							if($t0<strtotime($rule['min'])){
 								$err = (isset($msg[$field]['min'])) ? $msg[$field]['min'] :  'Minimum is '.$rule['min'];
-								$push_error($field,['data'=>$dato, 'error'=>'min', 'error_detail' => _($msg)],$errores);
+								$push_error($field,['data'=>$dato, 'error'=>'min', 'error_detail' => _($err)],$errores);
 							}
 								
 						}
@@ -359,7 +359,7 @@ class Validator implements IValidator
 						if(isset($rule['max'])){ 
 							if($t0>strtotime($rule['max'])){
 								$err = (isset($msg[$field]['max'])) ? $msg[$field]['max'] : 'Maximum is '.$rule['max'];
-								$push_error($field,['data'=>$dato, 'error'=>'max', 'error_detail' => _($msg)],$errores);
+								$push_error($field,['data'=>$dato, 'error'=>'max', 'error_detail' => _($err)],$errores);
 							}
 								
 						}

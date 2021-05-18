@@ -6,6 +6,7 @@ use simplerest\core\Model;
 use simplerest\libs\DB;
 use simplerest\models\schemas\WebhooksSchema;
 use simplerest\libs\Factory;
+use simplerest\libs\Validator;
 
 class WebhooksModel extends Model
 { 
@@ -23,16 +24,44 @@ class WebhooksModel extends Model
 		$entity = $data['entity'];
 		$entity_instance = DB::table($data['entity']);
 		
+		// podría directamente preguntar al schema
 		$fields = $entity_instance->getAttr();
-		$cond_fields = array_keys($conditions);
 
-		foreach($cond_fields as $cf){
-			if (!in_array($cf, $fields)){
-				Factory::response()->sendError('Data validation error', 400, "Some condition refers to '$cf' but it's unknown in $entity");
+		$allops = ['eq', 'gt', 'gteq', 'lteq', 'lt', 'neq', 'in', 'notIn', 'contains', 'notContains', 'startsWith', 'notStartsWith', 'endsWith', 'notEndsWith', 'containsWord', 'notContainsWord', 'between', 'notBetween'];
+
+		$rules  = $entity_instance->getRules();
+
+		foreach($conditions as $field => $v){
+			// valido que los campos existan
+			if (!in_array($field, $fields)){
+				Factory::response()->sendError('Data validation error', 400, "Some condition refers to '$field' but it's unknown in $entity");
 			}
-		}
 
-		//$rules  = $entity_instance->getRules();
+			$type = $rules[$field]['type'];
+			
+			if (is_array($v)){
+				foreach ($v as $op => $val){		
+					// valido tipos		
+					if (!Validator::isType($val, $type)){
+						Factory::response()->sendError('Data validation error', 400, "Dato '$val' is not a valid $type");
+					}
+					
+					// valido operadores
+					if (!in_array($op, $allops)){
+						Factory::response()->sendError('Data validation error', 400, "Unknown '$op' operator");
+					}
+				}
+			} else {
+				// el operador implicito es 'eq'
+
+				// valido tipos
+				if (!Validator::isType($v, $type)){
+					Factory::response()->sendError('Data validation error', 400, "Dato '$v' is not a valid $type");
+				}
+			}
+
+		}
 	}
+
 }
 
