@@ -728,8 +728,9 @@ abstract class ApiController extends ResourceController implements IApi
                 if ($id == null){
                     $validation = (new Validator())->setRequired(false)->ignoreFields($ignored)->validate($this->instance->getRules(),$data);
                     
-                    if ($validation !== true)
+                    if ($validation !== true){
                         throw new InvalidValidationException(json_encode($validation));
+                    }                        
                 }      
 
                 if (!empty($this->folder)) {
