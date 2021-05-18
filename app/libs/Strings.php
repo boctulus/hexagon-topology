@@ -349,7 +349,7 @@ class Strings
 		foreach($conditions as $field => $cond)
 		{
 			if (!is_array($cond)){                
-				if ($cond == 'null!' && $reg[$field] === null){                   
+				if ($cond == 'null' && $reg[$field] === null){                   
 					continue;
 				}
 

@@ -1114,12 +1114,12 @@ abstract class ApiController extends ResourceController implements IApi
                     
             }        
 
-            /*
+            // This is not 100$ right but....
             foreach ($data as $k => $v){
                 if (strtoupper($v) == 'NULL' && $this->instance->isNullable($k)) 
                     $data[$k] = NULL;
             }
-            */
+            
             
             $validado = (new Validator())->setRequired($put_mode)->validate($this->instance->getRules(), $data);
             if ($validado !== true){
@@ -1378,7 +1378,7 @@ abstract class ApiController extends ResourceController implements IApi
             if (!empty($hook['conditions'])){
                 parse_str($hook['conditions'], $conditions);
             }
-                
+
             if ($op == 'update' || $op == 'delete' || ($op == 'show' && !empty(Factory::request()->getQuery('fields')))){
                 
                 if ($op == 'update' && !empty($hook['conditions'])){                    
