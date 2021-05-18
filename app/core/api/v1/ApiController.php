@@ -1374,6 +1374,8 @@ abstract class ApiController extends ResourceController implements IApi
             'at' => date("Y-m-d H:i:s", time())
         ];
 
+        $old_data = null;
+
         foreach($hooks as $hook){
             if (!empty($hook['conditions'])){
                 parse_str($hook['conditions'], $conditions);
@@ -1390,10 +1392,13 @@ abstract class ApiController extends ResourceController implements IApi
                     {
                         if (Strings::filter($body['data'], $conditions)){
                             
-                            $old_data = DB::table($this->model_table)
-                            ->assoc()->find($id)->showDeleted()->first();
-                            $body['data'] = array_merge($old_data, $body['data']);
-
+                            if ($old_data === null){
+                                //dd('RETRIVE');
+                                $old_data = DB::table($this->model_table)
+                                ->assoc()->find($id)->showDeleted()->first();
+                                $body['data'] = array_merge($old_data, $body['data']);
+                            }
+                            
                             //dd('--> callback');
                             Url::consume_api($hook['callback'], 'POST', $body);
                         }
@@ -1401,8 +1406,12 @@ abstract class ApiController extends ResourceController implements IApi
                     continue;
                 }
 
-                $old_data = DB::table($this->model_table)
-                ->assoc()->find($id)->showDeleted()->first();
+                if ($old_data === null){
+                    //dd('RETRIVE');
+                    $old_data = DB::table($this->model_table)
+                    ->assoc()->find($id)->showDeleted()->first();
+                    $body['data'] = array_merge($old_data, $body['data']);
+                }
 
                 $body['data'] = array_merge($old_data, $body['data']);
             }

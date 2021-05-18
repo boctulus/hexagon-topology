@@ -199,25 +199,6 @@ class Strings
 		}		
 	}
 
-	/* 
-		retorna posición de nth ocurrencia de un caracter (no de un substr)
-	*/
-	static function posCharNth(string $str, $neddle, int $n){
-		$findings = 0;
-
-		$len = strlen($str);
-		for ($i=0; $i<$len; $i++){
-			if ($str[$i] == $neddle){
-				$findings++;
-
-				if ($findings == $n){
-					return $i;
-				} 
-			}
-		}
-	}
-
-	
 	/**
 	* String replace nth occurrence
 	* 
@@ -334,9 +315,6 @@ class Strings
 
 		Los operadores son practicamente los mismos que los de ApiController
 
-		El string de condiciones tiene la estructura del "concatenado" de queries en una url. Ej:
-
-		adsense=mabel&api_key=&alexa_rank[lteq]=1000
 	*/
 	static function filter(Array $reg, Array $conditions)
 	{

@@ -87,10 +87,9 @@ class TestController extends Controller
         ];
         
 
-        $cond_str = "name[contains]=crypto&name[notEndsWith]=.es";
-     
+        parse_str("name[contains]=crypto&name[notEndsWith]=.es", $cond);     
         
-        dd(Strings::filter($reg, $cond_str), 'OK');
+        dd(Strings::filter($reg, $cond), 'OK');
     }
 
 
